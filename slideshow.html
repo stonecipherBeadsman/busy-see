@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<title>x-♥-></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+.list {
+    height: 100%;
+    overflow: auto;
+}
+
+.mySlides {
+    display: none;
+}
+
+body {
+    margin: 0;
+    min-width: 250px;
+}
+
+
+
+
+/* Include the padding and border in an element's total width and height */
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+
+/* Remove margins and padding from the list */
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+
+
+/* Style the list items */
+
+ul li {
+    cursor: pointer;
+    position: relative;
+    padding: 12px 8px 12px 40px;
+    background: #eee;
+    font-size: 18px;
+    transition: 0.2s;
+
+    /* make the list items unselectable */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+
+
+/* Set all odd list items to a different color (zebra-stripes) */
+
+ul li:nth-child(odd) {
+    background: #f9f9f9;
+}
+
+
+
+
+/* Darker background-color on hover */
+
+ul li:hover {
+    background: #ddd;
+}
+
+
+
+
+/* When clicked on, add a background color and strike out text */
+
+ul li.checked {
+    background: #888;
+    color: #fff;
+    text-decoration: line-through;
+}
+
+
+
+
+/* Add a "checked" mark when clicked on */
+
+ul li.checked::before {
+    content: '';
+    position: absolute;
+    border-color: #fff;
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    top: 10px;
+    left: 16px;
+    transform: rotate(45deg);
+    height: 15px;
+    width: 7px;
+}
+
+
+
+
+/* Style the close button */
+
+.close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 12px 16px 12px 16px;
+}
+
+.close:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+
+
+
+/* Style the header */
+
+.header {
+    background-color: #f44336;
+    padding: 30px 40px;
+    color: white;
+    text-align: center;
+}
+
+
+
+
+/* Clear floats after the header */
+
+.header:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+
+/* Style the input */
+
+input {
+    border: none;
+    width: 75%;
+    padding: 10px;
+    float: left;
+    font-size: 16px;
+}
+
+
+
+
+/* Style the "Add" button */
+
+.addBtn {
+    padding: 10px;
+    width: 25%;
+    background: #d9d9d9;
+    color: #555;
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.addBtn:hover {
+    background-color: #bbb;
+}
+</style>
+
+<body>
+    <h2 class="w3-center"></h2>
+    <div class="w3-content w3-section" style="max-width:500px">
+        <img class="mySlides" src="001.PNG" style="width:100%">
+        <img class="mySlides" src="002.PNG" style="width:100%">
+        <img class="mySlides" src="003.PNG" style="width:100%">
+        <img class="mySlides" src="004.PNG" style="width:100%">
+        <img class="mySlides" src="005.PNG" style="width:100%">
+        <img class="mySlides" src="006.PNG" style="width:100%">
+        <img class="mySlides" src="007.jpg" style="width:100%">
+        <img class="mySlides" src="008.PNG" style="width:100%">
+        <img class="mySlides" src="009.jpg" style="width:100%">
+        <img class="mySlides" src="010.jpg" style="width:100%">
+        <img class="mySlides" src="011.jpg" style="width:100%">
+        <img class="mySlides" src="012.jpg" style="width:100%">
+        <img class="mySlides" src="013.jpg" style="width:100%">
+        <img class="mySlides" src="014.PNG" style="width:100%">
+        <img class="mySlides" src="015.png" style="width:100%">
+        <img class="mySlides" src="016.jpg" style="width:100%">
+        <img class="mySlides" src="017.jpg" style="width:100%">
+        <img class="mySlides" src="018.png" style="width:100%">
+        <img class="mySlides" src="019.png" style="width:100%">
+        <img class="mySlides" src="020.png" style="width:100%">
+        <img class="mySlides" src="021.jpg" style="width:100%">
+        <img class="mySlides" src="022.jpg" style="width:100%">
+        <img class="mySlides" src="023.PNG" style="width:100%">
+        <div id="myDIV" class="header">
+            <input type="text" id="myInput" placeholder="">
+            <span><input type=button value="+" onclick="newElement()" class="addBtn" id="add"></input></span>
+        </div id="list">
+        <div class="list">
+            <ul id="myUL">
+            </ul>
+        </div>
+    </div>
+    <script>
+    //dir /B > filelist.txt
+    document.onkeydown = keydown;
+
+    function keydown(evt) {
+        if (!evt) evt = event;
+        else if (evt.shiftKey && event.keyCode === 13) {
+            var inputValue = document.getElementById("myInput").value;
+            if (inputValue.indexOf(',') > -1) {
+                inputValue = inputValue.split(',');
+                for (var x = 0; x < inputValue.length; x++) {
+                    newElement(inputValue[x]);
+                }
+            }
+        } else if (evt.keyCode === 13) {
+            newElement();
+        } else if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 83) {
+            var notes = '';
+            var delim = ',';
+            for (var l = 0; l < document.getElementsByTagName('li').length; l++) {
+                if(l === document.getElementsByTagName('li').length-1){
+                  delim = '';
+                }
+                notes += document.getElementsByTagName('li')[l.toString()].childNodes["0"].firstChild.nodeValue + delim;
+                if(l === document.getElementsByTagName('li').length-1){
+                  alert(notes);
+                }
+            }
+        }
+    }
+    var source;
+
+    var myIndex = 0;
+    carousel();
+
+    function carousel() {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        myIndex++;
+        if (myIndex > x.length) { myIndex = 1 }
+        x[myIndex - 1].style.display = "block";
+        setTimeout(carousel, (1000 * 60 * 5)); // Change image every 2 seconds
+    }
+    // Create a "close" button and append it to each list item
+    var myNodelist = document.getElementsByTagName("LI");
+    var i;
+    for (i = 0; i < myNodelist.length; i++) {
+        var span = document.createElement("SPAN");
+        var txt = document.createTextNode("\u00D7");
+        span.className = "close";
+        span.appendChild(txt);
+        myNodelist[i].appendChild(span);
+    }
+
+    // Click on a close button to hide the current list item
+    var close = document.getElementsByClassName("close");
+    var i;
+    for (i = 0; i < close.length; i++) {
+        close[i].onclick = function() {
+            var div = this.parentElement;
+            div.style.display = "none";
+        }
+    }
+
+    // Add a "checked" symbol when clicking on a list item
+    var list = document.querySelector('ul');
+    list.addEventListener('click', function(ev) {
+        if (ev.target.tagName === 'LI') {
+            ev.target.classList.toggle('checked');
+        }
+    }, false);
+
+    // Create a new list item when clicking on the "Add" button
+    function newElement(listInputValue) {
+        var li = document.createElement("li");
+        var inputValue = listInputValue === undefined ? document.getElementById("myInput").value : listInputValue;
+        var s = document.createElement("span");
+        s.setAttribute('contenteditable', 'true');
+        var t = document.createTextNode(inputValue);
+        s.appendChild(t);
+        li.appendChild(s);
+        li.setAttribute('draggable', 'true');
+        li.setAttribute('ondragenter', 'dragenter(event)');
+        li.setAttribute('ondragstart', 'dragstart(event)');
+        if (inputValue === '' && listInputValue === undefined) {
+            alert("You must write something!");
+        } else {
+            document.getElementById("myUL").appendChild(li);
+        }
+        document.getElementById("myInput").value = "";
+
+        var span = document.createElement("SPAN");
+        var txt = document.createTextNode("\u00D7");
+        span.className = "close";
+        span.appendChild(txt);
+        li.appendChild(span);
+
+        for (i = 0; i < close.length; i++) {
+            close[i].onclick = function() {
+                var div = this.parentElement;
+                div.style.display = "none";
+            }
+        }
+    }
+
+    function isbefore(a, b) {
+        if (a.parentNode == b.parentNode) {
+            for (var cur = a; cur; cur = cur.previousSibling) {
+                if (cur === b) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function dragenter(e) {
+        //if(document.getElementById("myUL").child !== undefined){
+        if (isbefore(source, e.target)) {
+            e.target.parentNode.insertBefore(source, e.target);
+        } else {
+            e.target.parentNode.insertBefore(source, e.target.nextSibling);
+        }
+        //}
+    }
+
+    function dragstart(e) {
+        source = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+    }
+    </script>
+</body>
+
+</html>
