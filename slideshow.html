@@ -87,7 +87,10 @@ ul li.checked {
     text-decoration: line-through;
 }
 
-
+#columns {
+    column-count: 1;
+    column-gap: 0px;
+}
 
 
 /* Add a "checked" mark when clicked on */
@@ -105,9 +108,6 @@ ul li.checked::before {
     width: 7px;
 }
 
-
-
-
 /* Style the close button */
 
 .close {
@@ -122,9 +122,6 @@ ul li.checked::before {
     color: white;
 }
 
-
-
-
 /* Style the header */
 
 .header {
@@ -134,9 +131,6 @@ ul li.checked::before {
     text-align: center;
 }
 
-
-
-
 /* Clear floats after the header */
 
 .header:after {
@@ -144,9 +138,6 @@ ul li.checked::before {
     display: table;
     clear: both;
 }
-
-
-
 
 /* Style the input */
 
@@ -157,9 +148,6 @@ input {
     float: left;
     font-size: 16px;
 }
-
-
-
 
 /* Style the "Add" button */
 
@@ -210,7 +198,7 @@ input {
             <input type="text" id="myInput" placeholder="">
             <span><input type=button value="+" onclick="newElement()" class="addBtn" id="add"></input></span>
         </div id="list">
-        <div class="list">
+        <div class="list" id="columns">
             <ul id="myUL">
             </ul>
         </div>
@@ -279,6 +267,7 @@ input {
         close[i].onclick = function() {
             var div = this.parentElement;
             div.style.display = "none";
+            setColumns(document.getElementsByTagName('li').length);
         }
     }
 
@@ -300,6 +289,7 @@ input {
         s.appendChild(t);
         li.appendChild(s);
         li.setAttribute('draggable', 'true');
+        //li.setAttribute('id','columns');
         li.setAttribute('ondragenter', 'dragenter(event)');
         li.setAttribute('ondragstart', 'dragstart(event)');
         if (inputValue === '' && listInputValue === undefined) {
@@ -321,6 +311,7 @@ input {
                 div.style.display = "none";
             }
         }
+        setColumns(document.getElementsByTagName('li').length);
     }
 
     function isbefore(a, b) {
@@ -347,6 +338,31 @@ input {
     function dragstart(e) {
         source = e.target;
         e.dataTransfer.effectAllowed = 'move';
+    }
+    function setColumns(listLength){ //will have to account for deleted 
+ 		if(listLength / 10 > 2){
+ 			updateColumn(3);
+ 		} 		else if(listLength / 10 > 1){
+ 			updateColumn(2);
+ 		} else if(listLength <= 10){
+ 			updateColumn(1);
+ 		}
+    }
+
+    function updateColumn(numCol){
+    				var ss = document.styleSheets;
+ 			for (var i=0; i<ss.length; i++) {
+            var rules = ss[i].cssRules || ss[i].rules;
+            try{            
+            	for (var j=0; j<rules.length; j++) {
+                if (rules[j].selectorText.indexOf("#columns") > -1) {
+                    rules[j].style.columnCount = numCol;
+                }
+            }
+        	}catch(e){
+        		console.log('Error ' + e);
+        	}
+        }
     }
     </script>
 </body>
