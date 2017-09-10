@@ -1,1 +1,1 @@
-start Chrome.exe --app=file:///C:/Users/jwetzel/Desktop/e/Slideshow/slideshow.html
+start Chrome.exe --app=file:///C:/Users/S_J_Wetzel/Desktop/Josiah/slideshow/busy-see/slideshow.html
