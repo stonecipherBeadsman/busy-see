@@ -17,19 +17,11 @@ body {
     margin: 0;
     min-width: 250px;
 }
-
-
-
-
 /* Include the padding and border in an element's total width and height */
 
 * {
     box-sizing: border-box;
 }
-
-
-
-
 /* Remove margins and padding from the list */
 
 ul {
@@ -37,10 +29,6 @@ ul {
     padding: 0;
     list-style: none;
 }
-
-
-
-
 /* Style the list items */
 
 ul li {
@@ -57,28 +45,16 @@ ul li {
     -ms-user-select: none;
     user-select: none;
 }
-
-
-
-
 /* Set all odd list items to a different color (zebra-stripes) */
 
 ul li:nth-child(odd) {
     background: #f9f9f9;
 }
-
-
-
-
 /* Darker background-color on hover */
 
 ul li:hover {
     background: #ddd;
 }
-
-
-
-
 /* When clicked on, add a background color and strike out text */
 
 ul li.checked {
@@ -91,8 +67,6 @@ ul li.checked {
     column-count: 1;
     column-gap: 0px;
 }
-
-
 /* Add a "checked" mark when clicked on */
 
 ul li.checked::before {
@@ -107,7 +81,6 @@ ul li.checked::before {
     height: 15px;
     width: 7px;
 }
-
 /* Style the close button */
 
 .close {
@@ -121,7 +94,6 @@ ul li.checked::before {
     background-color: #f44336;
     color: white;
 }
-
 /* Style the header */
 
 .header {
@@ -130,7 +102,6 @@ ul li.checked::before {
     color: white;
     text-align: center;
 }
-
 /* Clear floats after the header */
 
 .header:after {
@@ -138,7 +109,6 @@ ul li.checked::before {
     display: table;
     clear: both;
 }
-
 /* Style the input */
 
 input {
@@ -148,7 +118,6 @@ input {
     float: left;
     font-size: 16px;
 }
-
 /* Style the "Add" button */
 
 .addBtn {
@@ -206,7 +175,6 @@ input {
     <script>
     //dir /B > filelist.txt
     document.onkeydown = keydown;
-
     function keydown(evt) {
         if (!evt) evt = event;
         else if (evt.shiftKey && event.keyCode === 13) {
@@ -223,21 +191,19 @@ input {
             var notes = '';
             var delim = ',';
             for (var l = 0; l < document.getElementsByTagName('li').length; l++) {
-                if(l === document.getElementsByTagName('li').length-1){
-                  delim = '';
+                if (l === document.getElementsByTagName('li').length - 1) {
+                    delim = '';
                 }
                 notes += document.getElementsByTagName('li')[l.toString()].childNodes["0"].firstChild.nodeValue + delim;
-                if(l === document.getElementsByTagName('li').length-1){
-                  alert(notes);
+                if (l === document.getElementsByTagName('li').length - 1) {
+                    alert(notes);
                 }
             }
         }
     }
     var source;
-
     var myIndex = 0;
     carousel();
-
     function carousel() {
         var i;
         var x = document.getElementsByClassName("mySlides");
@@ -245,10 +211,12 @@ input {
             x[i].style.display = "none";
         }
         myIndex++;
-        if (myIndex > x.length) { myIndex = 1 }
+        if (myIndex > x.length) { 
+        	myIndex = 1; 
+        }
         x[myIndex - 1].style.display = "block";
         setTimeout(carousel, (1000 * 60 * 5)); // Change image every 2 seconds
-    }
+    }    
     // Create a "close" button and append it to each list item
     var myNodelist = document.getElementsByTagName("LI");
     var i;
@@ -326,45 +294,49 @@ input {
     }
 
     function dragenter(e) {
-        //if(document.getElementById("myUL").child !== undefined){
         if (isbefore(source, e.target)) {
             e.target.parentNode.insertBefore(source, e.target);
         } else {
             e.target.parentNode.insertBefore(source, e.target.nextSibling);
         }
-        //}
     }
 
     function dragstart(e) {
         source = e.target;
         e.dataTransfer.effectAllowed = 'move';
     }
-    function setColumns(listLength){ //will have to account for deleted 
- 		if(listLength / 10 > 2){
- 			updateColumn(3);
- 		} 		else if(listLength / 10 > 1){
- 			updateColumn(2);
- 		} else if(listLength <= 10){
- 			updateColumn(1);
- 		}
+
+    function setColumns(listLength) { 
+    	//will have to account for closed 
+    	//they are currently counted because count
+    	//is dependant on number of li elements and 
+    	//closed notes remain as li's 
+        if (listLength / 10 > 2) {
+            updateColumn(3);
+        } else if (listLength / 10 > 1) {
+            updateColumn(2);
+        } else if (listLength <= 10) {
+            updateColumn(1);
+        }
     }
 
-    function updateColumn(numCol){
-    				var ss = document.styleSheets;
- 			for (var i=0; i<ss.length; i++) {
+    function updateColumn(numCol) {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; i++) {
             var rules = ss[i].cssRules || ss[i].rules;
-            try{            
-            	for (var j=0; j<rules.length; j++) {
-                if (rules[j].selectorText.indexOf("#columns") > -1) {
-                    rules[j].style.columnCount = numCol;
+            try {
+                for (var j = 0; j < rules.length; j++) {
+                    if (rules[j].selectorText.indexOf("#columns") > -1) {
+                        rules[j].style.columnCount = numCol;
+                    }
                 }
+            } catch (e) {
+    			//this is broken and the issue should be fixed rather than 
+    			//just caught and ignored
+                console.log('Error ' + e);
             }
-        	}catch(e){
-        		console.log('Error ' + e);
-        	}
         }
     }
     </script>
 </body>
-
 </html>
