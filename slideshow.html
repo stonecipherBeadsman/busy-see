@@ -194,6 +194,10 @@ input {
                 if (l === document.getElementsByTagName('li').length - 1) {
                     delim = '';
                 }
+                //ERROR
+                //Uncaught TypeError: Cannot read property 'nodeValue' of null
+    			//at HTMLDocument.keydown (slideshow.html:230)
+    			//occurrs if list has > 20 items and you attempt to [ctrl + shift + s]
                 notes += document.getElementsByTagName('li')[l.toString()].childNodes["0"].firstChild.nodeValue + delim;
                 if (l === document.getElementsByTagName('li').length - 1) {
                     alert(notes);
@@ -297,6 +301,10 @@ input {
         if (isbefore(source, e.target)) {
             e.target.parentNode.insertBefore(source, e.target);
         } else {
+        	//ERROR
+        	//Uncaught DOMException: Failed to execute 'insertBefore' on 'Node': The new child element contains the parent.
+        	//possible https://github.com/developit/preact/issues/369
+        	//https://stackoverflow.com/questions/29687519/the-new-child-element-contains-the-parent
             e.target.parentNode.insertBefore(source, e.target.nextSibling);
         }
     }
