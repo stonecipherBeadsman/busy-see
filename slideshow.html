@@ -139,30 +139,7 @@ input {
 
 <body>
     <h2 class="w3-center"></h2>
-    <div class="w3-content w3-section" style="max-width:500px">
-        <img class="mySlides" src="001.PNG" style="width:100%">
-        <img class="mySlides" src="002.PNG" style="width:100%">
-        <img class="mySlides" src="003.PNG" style="width:100%">
-        <img class="mySlides" src="004.PNG" style="width:100%">
-        <img class="mySlides" src="005.PNG" style="width:100%">
-        <img class="mySlides" src="006.PNG" style="width:100%">
-        <img class="mySlides" src="007.jpg" style="width:100%">
-        <img class="mySlides" src="008.PNG" style="width:100%">
-        <img class="mySlides" src="009.jpg" style="width:100%">
-        <img class="mySlides" src="010.jpg" style="width:100%">
-        <img class="mySlides" src="011.jpg" style="width:100%">
-        <img class="mySlides" src="012.jpg" style="width:100%">
-        <img class="mySlides" src="013.jpg" style="width:100%">
-        <img class="mySlides" src="014.PNG" style="width:100%">
-        <img class="mySlides" src="015.png" style="width:100%">
-        <img class="mySlides" src="016.jpg" style="width:100%">
-        <img class="mySlides" src="017.jpg" style="width:100%">
-        <img class="mySlides" src="018.png" style="width:100%">
-        <img class="mySlides" src="019.png" style="width:100%">
-        <img class="mySlides" src="020.png" style="width:100%">
-        <img class="mySlides" src="021.jpg" style="width:100%">
-        <img class="mySlides" src="022.jpg" style="width:100%">
-        <img class="mySlides" src="023.PNG" style="width:100%">
+    <div class="w3-content w3-section" style="max-width:500px" id="pictureFrame">
         <div id="myDIV" class="header">
             <input type="text" id="myInput" placeholder="">
             <span><input type=button value="+" onclick="newElement()" class="addBtn" id="add"></input></span>
@@ -174,6 +151,35 @@ input {
     </div>
     <script>
     //dir /B > filelist.txt
+    function shuffle(array) {
+          var currentIndex = array.length, temporaryValue, randomIndex;
+          // While there remain elements to shuffle...
+          while (0 !== currentIndex) {
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+          }
+          return array;
+    }
+    function generatePictureHtml(imageNames, useRandom){
+        var frame = document.getElementById('pictureFrame');
+        var image;
+        if(useRandom){
+            imageNames = shuffle(shuffle(imageNames));
+        }
+        for(x = 0; x < imageNames.length; x++){
+            image = document.createElement("img");
+            image.className = 'mySlides';
+            image.src = imageNames[x];
+            image.style = 'width:100%';
+            frame.insertBefore(image, frame.childNodes[0]);
+        }
+    }
+
     document.onkeydown = keydown;
     function keydown(evt) {
         if (!evt) evt = event;
@@ -196,8 +202,8 @@ input {
                 }
                 //ERROR
                 //Uncaught TypeError: Cannot read property 'nodeValue' of null
-    			//at HTMLDocument.keydown (slideshow.html:230)
-    			//occurrs if list has > 20 items and you attempt to [ctrl + shift + s]
+                //at HTMLDocument.keydown (slideshow.html:230)
+                //occurrs if list has > 20 items and you attempt to [ctrl + shift + s]
                 notes += document.getElementsByTagName('li')[l.toString()].childNodes["0"].firstChild.nodeValue + delim;
                 if (l === document.getElementsByTagName('li').length - 1) {
                     alert(notes);
@@ -205,51 +211,6 @@ input {
             }
         }
     }
-    var source;
-    var myIndex = 0;
-    carousel();
-    function carousel() {
-        var i;
-        var x = document.getElementsByClassName("mySlides");
-        for (i = 0; i < x.length; i++) {
-            x[i].style.display = "none";
-        }
-        myIndex++;
-        if (myIndex > x.length) { 
-        	myIndex = 1; 
-        }
-        x[myIndex - 1].style.display = "block";
-        setTimeout(carousel, (1000 * 60 * 5)); // Change image every 2 seconds
-    }    
-    // Create a "close" button and append it to each list item
-    var myNodelist = document.getElementsByTagName("LI");
-    var i;
-    for (i = 0; i < myNodelist.length; i++) {
-        var span = document.createElement("SPAN");
-        var txt = document.createTextNode("\u00D7");
-        span.className = "close";
-        span.appendChild(txt);
-        myNodelist[i].appendChild(span);
-    }
-
-    // Click on a close button to hide the current list item
-    var close = document.getElementsByClassName("close");
-    var i;
-    for (i = 0; i < close.length; i++) {
-        close[i].onclick = function() {
-            var div = this.parentElement;
-            div.style.display = "none";
-            setColumns(document.getElementsByTagName('li').length);
-        }
-    }
-
-    // Add a "checked" symbol when clicking on a list item
-    var list = document.querySelector('ul');
-    list.addEventListener('click', function(ev) {
-        if (ev.target.tagName === 'LI') {
-            ev.target.classList.toggle('checked');
-        }
-    }, false);
 
     // Create a new list item when clicking on the "Add" button
     function newElement(listInputValue) {
@@ -301,12 +262,12 @@ input {
         if (isbefore(source, e.target)) {
             e.target.parentNode.insertBefore(source, e.target);
         } else {
-        	//ERROR
-        	//Uncaught DOMException: Failed to execute 'insertBefore' on 'Node': The new child element contains the parent.
-        	//possible https://github.com/developit/preact/issues/369
-        	//https://stackoverflow.com/questions/29687519/the-new-child-element-contains-the-parent
-        	console.log(source);
-        	console.log(e.target);
+            //ERROR
+            //Uncaught DOMException: Failed to execute 'insertBefore' on 'Node': The new child element contains the parent.
+            //possible https://github.com/developit/preact/issues/369
+            //https://stackoverflow.com/questions/29687519/the-new-child-element-contains-the-parent
+            console.log(source);
+            console.log(e.target);
             e.target.parentNode.insertBefore(source, e.target.nextSibling);
         }
     }
@@ -317,10 +278,10 @@ input {
     }
 
     function setColumns(listLength) { 
-    	//will have to account for closed 
-    	//they are currently counted because count
-    	//is dependant on number of li elements and 
-    	//closed notes remain as li's 
+        //will have to account for closed 
+        //they are currently counted because count
+        //is dependant on number of li elements and 
+        //closed notes remain as li's 
         if (listLength / 10 > 2) {
             updateColumn(3);
         } else if (listLength / 10 > 1) {
@@ -341,12 +302,65 @@ input {
                     }
                 }
             } catch (e) {
-    			//this is broken and the issue should be fixed rather than 
-    			//just caught and ignored
+                //this is broken and the issue should be fixed rather than 
+                //just caught and ignored
                 console.log('Error ' + e);
             }
         }
     }
+
+    function carousel() {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        myIndex++;
+        if (myIndex > x.length) { 
+            myIndex = 1; 
+        }
+        x[myIndex - 1].style.display = "block";
+        setTimeout(carousel, (1000 * 60 * 5)); // Change image every 2 seconds
+    }
+
+    var imageNames = ["024.PNG","025.PNG","026.PNG","027.PNG","028.PNG","023.PNG","030.PNG","001.PNG","002.PNG","003.PNG","004.PNG","005.PNG","006.PNG","007.jpg","008.PNG","009.jpg","010.jpg","011.jpg","012.jpg","013.jpg","014.PNG","015.png","016.jpg","017.jpg","018.png","019.png","020.png","021.jpg","022.jpg","023.PNG"];
+
+    generatePictureHtml(imageNames, true);
+
+    var source;
+    var myIndex = 0;
+    carousel();
+
+    // Create a "close" button and append it to each list item
+    var myNodelist = document.getElementsByTagName("LI");
+    var i;
+    for (i = 0; i < myNodelist.length; i++) {
+        var span = document.createElement("SPAN");
+        var txt = document.createTextNode("\u00D7");
+        span.className = "close";
+        span.appendChild(txt);
+        myNodelist[i].appendChild(span);
+    }
+
+    // Click on a close button to hide the current list item
+    var close = document.getElementsByClassName("close");
+    var i;
+    for (i = 0; i < close.length; i++) {
+        close[i].onclick = function() {
+            var div = this.parentElement;
+            div.style.display = "none";
+            setColumns(document.getElementsByTagName('li').length);
+        }
+    }
+
+    // Add a "checked" symbol when clicking on a list item
+    var list = document.querySelector('ul');
+    list.addEventListener('click', function(ev) {
+        if (ev.target.tagName === 'LI') {
+            ev.target.classList.toggle('checked');
+        }
+    }, false);
+
     </script>
 </body>
 </html>
