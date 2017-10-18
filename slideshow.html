@@ -305,6 +305,8 @@ input {
         	//Uncaught DOMException: Failed to execute 'insertBefore' on 'Node': The new child element contains the parent.
         	//possible https://github.com/developit/preact/issues/369
         	//https://stackoverflow.com/questions/29687519/the-new-child-element-contains-the-parent
+        	console.log(source);
+        	console.log(e.target);
             e.target.parentNode.insertBefore(source, e.target.nextSibling);
         }
     }
