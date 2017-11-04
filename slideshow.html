@@ -222,7 +222,7 @@ input {
         s.appendChild(t);
         li.appendChild(s);
         li.setAttribute('draggable', 'true');
-        //li.setAttribute('id','columns');
+        li.setAttribute('class','listItem');
         li.setAttribute('ondragenter', 'dragenter(event)');
         li.setAttribute('ondragstart', 'dragstart(event)');
         if (inputValue === '' && listInputValue === undefined) {
@@ -242,9 +242,11 @@ input {
             close[i].onclick = function() {
                 var div = this.parentElement;
                 div.style.display = "none";
+                div.className = "closedListItem";
+                setColumns(document.getElementsByClassName('listItem').length);
             }
         }
-        setColumns(document.getElementsByTagName('li').length);
+        setColumns(document.getElementsByClassName('listItem').length)
     }
 
     function isbefore(a, b) {
@@ -286,7 +288,7 @@ input {
             updateColumn(3);
         } else if (listLength / 10 > 1) {
             updateColumn(2);
-        } else if (listLength <= 10) {
+        } else {
             updateColumn(1);
         }
     }
@@ -297,7 +299,9 @@ input {
             var rules = ss[i].cssRules || ss[i].rules;
             try {
                 for (var j = 0; j < rules.length; j++) {
-                    if (rules[j].selectorText.indexOf("#columns") > -1) {
+                    if (rules[j].selectorText.indexOf("#columns") > -1
+                        //|| rules[j].selectorText.indexOf("#columns") == numCol + 1
+                        ) {
                         rules[j].style.columnCount = numCol;
                     }
                 }
