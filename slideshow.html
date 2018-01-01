@@ -136,7 +136,7 @@ input {
     background-color: #bbb;
 }
 </style>
-
+<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
 <body>
     <h2 class="w3-center"></h2>
     <div class="w3-content w3-section" style="max-width:500px" id="pictureFrame">
@@ -145,11 +145,26 @@ input {
             <span><input type=button value="+" onclick="newElement()" class="addBtn" id="add"></input></span>
         </div id="list">
         <div class="list" id="columns">
-            <ul id="myUL">
+            <ul id="activeList">
+            </ul>
+            <ul id="closedList">
             </ul>
         </div>
     </div>
     <script>
+    	try{
+    		var config = {
+		 	   apiKey: "AIzaSyCR6agjDcfcM4GFRRfEyC_MdKEHAki0w24",
+		 	   authDomain: "day-path.firebaseapp.com",
+		 	   databaseURL: "https://day-path.firebaseio.com",
+		 	   projectId: "day-path",
+		 	   storageBucket: "day-path.appspot.com",
+		 	   messagingSenderId: "792022960740"
+		 	};
+		 	firebase.initializeApp(config);
+    	}catch(e){
+    		console.log('FireBase Failed for some reason:', e);
+    	}
     //dir /B > filelist.txt
     function shuffle(array) {
           var currentIndex = array.length, temporaryValue, randomIndex;
@@ -178,6 +193,20 @@ input {
             image.style = 'width:100%';
             frame.insertBefore(image, frame.childNodes[0]);
         }
+    }
+
+    function readToDos(path){
+    	if(path === 'items'){
+	    	return firebase.database().ref('/items').once('value').then(function(snapshot) {
+				  console.log(snapshot.val());
+				  document.getElementById('myInput').value = snapshot.val().itemsList.toString();
+				});
+	    }else if(path === 'tasks'){
+	    	return firebase.database().ref('/tasks').once('value').then(function(snapshot) {
+				  console.log(snapshot.val());
+				  document.getElementById('myInput').value = snapshot.val().taskList.toString();
+				});
+	    }
     }
 
     document.onkeydown = keydown;
@@ -209,6 +238,18 @@ input {
                     alert(notes);
                 }
             }
+        } else if (evt.ctrlKey && evt.keyCode === 73) {
+    		var promptInput = prompt('Pull List down from List Source App?', 'yes');
+    		if (promptInput === null || promptInput === "") {
+    			console.log('canceled');
+    		} else if (promptInput === 'yes'){
+    			//pull changes from firebase
+    			//Get a reference to the database service
+    			var list = prompt('Do you want \'items\' or \'tasks\'?', 'tasks');
+    			if(list === 'tasks' || list === 'items'){
+					readToDos(list);    				
+    			}
+    		}
         }
     }
 
@@ -228,14 +269,14 @@ input {
         if (inputValue === '' && listInputValue === undefined) {
             alert("You must write something!");
         } else {
-            document.getElementById("myUL").appendChild(li);
+            document.getElementById("activeList").appendChild(li);
         }
         document.getElementById("myInput").value = "";
 
         var span = document.createElement("SPAN");
-        var txt = document.createTextNode("\u00D7");
+        //var txt = document.createTextNode("\u00D7");
         span.className = "close";
-        span.appendChild(txt);
+        //span.appendChild(txt);
         li.appendChild(span);
 
         for (i = 0; i < close.length; i++) {
@@ -244,9 +285,11 @@ input {
                 div.style.display = "none";
                 div.className = "closedListItem";
                 setColumns(document.getElementsByClassName('listItem').length);
+                var closedUL = document.getElementById("closedList");
+                closedUL.insertBefore(div)
             }
         }
-        setColumns(document.getElementsByClassName('listItem').length)
+        setColumns(document.getElementsByClassName('listItem').length);
     }
 
     function isbefore(a, b) {
@@ -279,11 +322,7 @@ input {
         e.dataTransfer.effectAllowed = 'move';
     }
 
-    function setColumns(listLength) { 
-        //will have to account for closed 
-        //they are currently counted because count
-        //is dependant on number of li elements and 
-        //closed notes remain as li's 
+    function setColumns(listLength) {
         if (listLength / 10 > 2) {
             updateColumn(3);
         } else if (listLength / 10 > 1) {
@@ -299,9 +338,7 @@ input {
             var rules = ss[i].cssRules || ss[i].rules;
             try {
                 for (var j = 0; j < rules.length; j++) {
-                    if (rules[j].selectorText.indexOf("#columns") > -1
-                        //|| rules[j].selectorText.indexOf("#columns") == numCol + 1
-                        ) {
+                    if (rules[j].selectorText.indexOf("#columns") > -1) {
                         rules[j].style.columnCount = numCol;
                     }
                 }
@@ -365,6 +402,12 @@ input {
         }
     }, false);
 
+    // Enable navigation prompt
+	window.onbeforeunload = function() {
+	    return true;
+	};
+	// Remove navigation prompt
+	//window.onbeforeunload = null;
     </script>
 </body>
 </html>
