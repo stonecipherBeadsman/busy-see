@@ -142,7 +142,7 @@ input {
     <div class="w3-content w3-section" style="max-width:500px" id="pictureFrame">
         <div id="myDIV" class="header">
             <input type="text" id="myInput" placeholder="">
-            <span><input type=button value="+" onclick="newElement()" class="addBtn" id="add"></input></span>
+            <span><input type=button value="+" onclick="createNewElements()" class="addBtn" id="add"></input></span>
         </div id="list">
         <div class="list" id="columns">
             <ul id="activeList">
@@ -166,6 +166,11 @@ input {
     		console.log('FireBase Failed for some reason:', e);
     	}
     //dir /B > filelist.txt
+	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+	    // Take the user to a different screen here.
+	    console.log(navigator.userAgent);
+	    pullInToDos(createNewElements);
+	}
     function shuffle(array) {
           var currentIndex = array.length, temporaryValue, randomIndex;
           // While there remain elements to shuffle...
@@ -209,19 +214,40 @@ input {
 	    }
     }
 
+    function pullInToDos(callback){
+    	var promptInput = prompt('Pull List down from List Source App?', 'yes');
+    	if (promptInput === null || promptInput === "") {
+    		console.log('canceled');
+    	} else if (promptInput === 'yes'){
+    		//pull changes from firebase
+    		//Get a reference to the database service
+    		var list = prompt('Do you want \'items\' or \'tasks\'?', 'tasks');
+    		if(list === 'tasks' || list === 'items'){
+				readToDos(list);    				
+    		}
+    	}
+    	if(callback !== undefined){
+    		callback();
+    	}
+    }
+
+    function createNewElements(){
+    	var inputValue = document.getElementById("myInput").value;
+        if (inputValue.indexOf(',') > -1) {
+            inputValue = inputValue.split(',');
+            for (var x = 0; x < inputValue.length; x++) {
+                newElement(inputValue[x]);
+            }
+        } else {
+        	newElement(inputValue);
+        }
+    }
+
     document.onkeydown = keydown;
     function keydown(evt) {
         if (!evt) evt = event;
-        else if (evt.shiftKey && event.keyCode === 13) {
-            var inputValue = document.getElementById("myInput").value;
-            if (inputValue.indexOf(',') > -1) {
-                inputValue = inputValue.split(',');
-                for (var x = 0; x < inputValue.length; x++) {
-                    newElement(inputValue[x]);
-                }
-            }
-        } else if (evt.keyCode === 13) {
-            newElement();
+        else if (evt.keyCode === 13) {
+            createNewElements();
         } else if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 83) {
             var notes = '';
             var delim = ',';
@@ -239,17 +265,7 @@ input {
                 }
             }
         } else if (evt.ctrlKey && evt.keyCode === 73) {
-    		var promptInput = prompt('Pull List down from List Source App?', 'yes');
-    		if (promptInput === null || promptInput === "") {
-    			console.log('canceled');
-    		} else if (promptInput === 'yes'){
-    			//pull changes from firebase
-    			//Get a reference to the database service
-    			var list = prompt('Do you want \'items\' or \'tasks\'?', 'tasks');
-    			if(list === 'tasks' || list === 'items'){
-					readToDos(list);    				
-    			}
-    		}
+        	pullInToDos();
         }
     }
 
