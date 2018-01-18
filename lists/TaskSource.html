@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Task List</title>
+	<link rel="stylesheet" href="">
+	<style>
+		#list {
+		    column-count: 5;
+		    column-gap: 0px;
+		}
+
+		#categoryLabel {
+			background: mintcream;
+			font-size: small;
+			font-variant: small-caps;
+		}
+	</style>
+	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+</head>
+<body style="font-family: monospace; text-align: center;background: snow">
+	<h2>List of Tasks</h2>
+	<form id="list" style="text-align: left;"></form>
+	<input type="submit" value="Share List" onclick="alert(getSelectedCheckBoxes(true))">
+	<input type="submit" value="Clear List" onclick="removeAllElementsFromNode()">
+	<input type="submit" value="Populate List" onclick="populateList()">
+	<input type="submit" value="Sort List by Category" onclick="sortItemListByCategory()">
+	<input type="submit" value="Sort List by Item" onclick="sortItemListByItem()">
+</body>
+<script type="text/javascript">
+    try{
+    	var config = {
+	 	   apiKey: "AIzaSyCR6agjDcfcM4GFRRfEyC_MdKEHAki0w24",
+	 	   authDomain: "day-path.firebaseapp.com",
+	 	   databaseURL: "https://day-path.firebaseio.com",
+	 	   projectId: "day-path",
+	 	   storageBucket: "day-path.appspot.com",
+	 	   messagingSenderId: "792022960740"
+	 	};
+	 	firebase.initializeApp(config);
+	 	console.log('Firebase Succeeded to Load');
+    }catch(e){
+    	console.log('FireBase Failed for some reason:', e);
+    }
+
+    function writeTasks(tasks) {
+    	console.log(tasks);
+	  	firebase.database().ref('tasks').set({
+	  		taskList: tasks
+	  	});
+	}
+
+    function hotkeyCheck(evt) {
+    	if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 69) {
+    		var promptInput = prompt('Push to ToDo App?', 'yes');
+    		if (promptInput === null || promptInput === "") {
+    			console.log('canceled');
+    		} else if (promptInput === 'yes'){
+    			//push changes to firebase
+    			// Get a reference to the database service
+    			var tasks = getSelectedCheckBoxes(true);
+				writeTasks(tasks);
+    		}
+    	}
+    }
+
+    document.onkeydown = hotkeyCheck;
+
+	var checklistItems = [
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clear Counters'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clear Island'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Sweep Kitchen'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Mop Kitchen'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Vacuum Kitchen'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clean Microwave'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Empty Dishwasher'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Fill Dishwasher'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Organize Pantry'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clean Out Pantry'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Scrub Kitchen Sink'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Scrub Counters'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Scrub Island'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clean Kitchen Window'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clear Refridgerator Face'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Clean Out Refridgerator'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Take Trash Out Kitchen'},
+			{'isChecked': false, 'category': 'clean kitchen', 'task': 'Take Recycling Out'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Pick up Joanna and Naomi\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Pick up Ezra\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Pick up Master Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Vacuum Joanna and Naomi\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Vacuum Ezra\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Vacuum Master Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Dust Ezra\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Dust Joanna and Naomi\'s Bedroom'},
+			{'isChecked': false, 'category': 'clean bedroom', 'task': 'Dust Master Bedroom'},
+			{'isChecked': false, 'category': 'clean bathroom hall', 'task': 'Scrub Toilet in Hall Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom hall', 'task': 'Scrub Tub in Hall Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom hall', 'task': 'Scrub Counter in Hall Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom hall', 'task': 'Mop Floor in Hall Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom hall', 'task': 'Clean Mirror Hall Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom master', 'task': 'Scrub Shower in Master Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom master', 'task': 'Scrub Counter in Master Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom master', 'task': 'Mop Floor in Master Bathroom'},
+			{'isChecked': false, 'category': 'clean bathroom master', 'task': 'Clean Mirror Master Bathroom'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Vacuum Living Room'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Sweep Living Room'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Mop Living Room'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Dust Living Room'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Clean Living Room Windows'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Pick up Living Room'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Clear Hutch'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Clear Computer Desk'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Organize Books Livingroom'},
+			{'isChecked': false, 'category': 'clean livingroom', 'task': 'Clean Screens'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Vacuum Playroom'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Pick up Playroom'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Clear Top of Bookshelves'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Organize Toys'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Organize Books Playroom'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Cycle Toys from Basement'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Bring Toys to Basement'},
+			{'isChecked': false, 'category': 'clean playroom', 'task': 'Clean Carpet'},
+			{'isChecked': false, 'category': 'clean basement', 'task': 'Organize Shelves'},
+			{'isChecked': false, 'category': 'clean basement', 'task': 'Clean up Equipment'},
+			{'isChecked': false, 'category': 'clean basement', 'task': 'Organize Toys'},
+			{'isChecked': false, 'category': 'clean basement', 'task': 'Organize Books Basement'},
+			{'isChecked': false, 'category': 'clean car', 'task': 'Collect Toys and Clothes from Van'},
+			{'isChecked': false, 'category': 'clean car', 'task': 'Wash Van'},
+			{'isChecked': false, 'category': 'clean car', 'task': 'Vacuum Van'},
+			{'isChecked': false, 'category': 'clean car', 'task': 'Wash Car'},
+			{'isChecked': false, 'category': 'clean car', 'task': 'Vacuum Car'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Living Room'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Kitchen'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Bathrooms'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Master Bedroom'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Naomi and Joanna\'s Room'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize Toys'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize in Basement'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize Kid\'s Clothes'},
+			{'isChecked': false, 'category': 'minimize', 'task': 'Minimize Parents\'s Clothes'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Coffee'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Smoothie'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Sarah\'s Lunch'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Josiah\'s Lunch'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Dinner'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Lunch'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Breakfast'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Make Oat Cakes'},
+			{'isChecked': false, 'category': 'food plan', 'task': 'Take Stock of food Items Needed'},
+			{'isChecked': false, 'category': 'food plan', 'task': 'Meal Plan for the Week'},
+			{'isChecked': false, 'category': 'food purchase', 'task': 'Make Sam\'s List'},
+			{'isChecked': false, 'category': 'food purchase', 'task': 'Make Walmart List'},
+			{'isChecked': false, 'category': 'food purchase', 'task': 'Make Aldi List'},
+			{'isChecked': false, 'category': 'laundry', 'task': 'Start Load of Laundry'},
+			{'isChecked': false, 'category': 'laundry', 'task': 'Transfer Load of Laundry'},
+			{'isChecked': false, 'category': 'laundry', 'task': 'Fold Load of Laundry'},
+			{'isChecked': false, 'category': 'laundry', 'task': 'Put Laundry Away'},
+			{'isChecked': false, 'category': 'laundry', 'task': 'Steam Shirts'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Read Bible'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Read Spiritual Development'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Read Personal Development'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Read Fun'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Stretch'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Tiny Hearts Tabata 4 Min'},
+			{'isChecked': false, 'category': 'self care', 'task': '5x5'},
+			{'isChecked': false, 'category': 'self care', 'task': 'MuTu Stretch'},
+			{'isChecked': false, 'category': 'self care', 'task': 'MuTu Strength'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Kettle Bell'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Pull Ups'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Dead Lift'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Squat'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Over Head Squat'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Bench Press'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Over Head Press'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Yoga 20 Min'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Walk'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Ride Bike 15 Min'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Meditate'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Pray'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Sit in Squat 10 Min'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Plan Week'},
+			{'isChecked': false, 'category': 'self care', 'task': 'Mineral Bath'},
+			{'isChecked': false, 'category': 'budget', 'task': 'Budget Meeting'},
+			{'isChecked': false, 'category': 'budget', 'task': 'Financial Goals Progres'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Soak Broccoli Seeds'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Start Broccoli Seeds'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Water Broccoli Seeds'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Harvest Broccoli Seeds'},
+			{'isChecked': false, 'category': 'food prep', 'task': 'Start Kefir'},
+			{'isChecked': false, 'category': 'pet care', 'task': 'Change Litterbox'},
+			{'isChecked': false, 'category': 'pet care', 'task': 'Scoop Litterbox'},
+			{'isChecked': false, 'category': 'pet care', 'task': 'Feed Cats'},
+			{'isChecked': false, 'category': 'pet care', 'task': 'Water Cats'},
+			{'isChecked': false, 'category': 'pet care', 'task': 'Clean Cat Bowls'},
+			{'isChecked': false, 'category': 'home', 'task': 'Fill Humidifiers'},
+			{'isChecked': false, 'category': 'kid care', 'task': 'Bathe Kids'},
+			{'isChecked': false, 'category': 'clean bathroom', 'task': 'Bathroom Trash'},
+			{'isChecked': false, 'category': 'clean basement', 'task': 'Basement Trash'}
+		];
+	function createCheckBoxesHTML(checkBoxItems){
+		var checkbox;
+		var label;
+		var categoryLabel;
+		var list;
+		var br; 
+		var br2; 
+		for (var taskNumber = 0; taskNumber < checkBoxItems.length; taskNumber++){
+			br = document.createElement('br');
+			br2 = document.createElement('br');
+			checkbox = document.createElement('input');
+			checkbox.type = "checkbox";
+			checkbox.name = 'task';
+			checkbox.value = checkBoxItems[taskNumber].name;
+			checkbox.id = checkBoxItems[taskNumber].uuid;
+			
+			label = document.createElement('label');
+			label.htmlFor = checkBoxItems[taskNumber].uuid;
+			label.appendChild(document.createTextNode(checkBoxItems[taskNumber].name));
+
+			categoryLabel = document.createElement('label');
+			categoryLabel.htmlFor = checkBoxItems[taskNumber].uuid;
+			categoryLabel.appendChild(document.createTextNode(checkBoxItems[taskNumber].category));
+			categoryLabel.setAttribute('id', 'categoryLabel');
+
+			list = document.getElementById('list');
+			list.appendChild(checkbox);
+			label.innerHTML += '&nbsp';
+			list.appendChild(label);
+			list.appendChild(categoryLabel);
+			list.appendChild(br);
+		}
+	}
+
+	function createCheckBoxItem(uuid, taskName, taskCategory){
+		return {'name': taskName, 'uuid': uuid, 'category': taskCategory};
+	}
+
+	function randomIntFromInterval(min,max){
+    	return (Math.floor((Math.random()*(max-min)+min) * 1)) / 1;
+    }
+
+    function padNumber(number) {
+        if (number < 10) {
+            return '00000' + number.toString();
+        } else if (number < 100) {
+            return '0000' + number.toString();
+        } else if (number < 1000) {
+        	return '000' + number.toString();
+        } else if (number < 10000) {
+        	return '00' + number.toString();
+        } else if (number < 100000){
+        	return '0' + number.toString();
+        } 
+        return number.toString();
+    }
+
+	function createUuid(){
+		var uuid = padNumber(randomIntFromInterval(1,10000));
+		return uuid;
+	}
+
+	function createCheckBoxItemList(taskList, sort){
+		var checkBoxItemList = [];
+		if(sort){
+			if(sort.by === 'category'){
+				taskList.sort(function(a, b){
+				    if(a.category < b.category) return -1;
+				    if(a.category > b.category) return 1;
+				    return 0;
+				});
+			} else {
+				taskList.sort(function(a, b){
+				    if(a.task < b.task) return -1;
+				    if(a.task > b.task) return 1;
+				    return 0;
+				});
+			}
+		}
+		for (var i = 0; i < taskList.length; i++) {
+			checkBoxItemList.push(createCheckBoxItem(createUuid(),taskList[i].task,taskList[i].category));
+		}
+		return checkBoxItemList;
+	}
+
+	function getSelectedCheckBoxes(shouldReturnAsString){
+		var checkboxes = document.getElementsByName('task');
+		var arrayVal = [];
+		var valString = '';
+		for (var i= 0; i<checkboxes.length;i++){
+		    if (checkboxes[i].checked === true){
+		        arrayVal.push(checkboxes[i].value); 
+		    }
+		 }
+
+		if(shouldReturnAsString){
+			for (var x = 0; x < arrayVal.length; x++){
+				valString += arrayVal[x] + ',';
+			}
+			return valString;
+		} else {
+			return arrayVal;
+		}
+	}
+
+	function setColumns(listLength) {
+        if (listLength / 10 > 3) {
+            updateColumn(4);
+        } else if (listLength / 10 > 2) {
+            updateColumn(3);
+        } else if (listLength / 10 > 1) {
+            updateColumn(2);
+        } else {
+            updateColumn(1);
+        }
+    }
+
+    function updateColumn(numCol) {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; i++) {
+            var rules = ss[i].cssRules || ss[i].rules;
+            try {
+                for (var j = 0; j < rules.length; j++) {
+                    if (rules[j].selectorText.indexOf("#list") > -1) {
+                        rules[j].style.columnCount = numCol;
+                    }
+                }
+            } catch (e) {
+                //this is broken and the issue should be fixed rather than 
+                //just caught and ignored
+                console.log('Error ' + e);
+            }
+        }
+    }
+
+    function removeAllElementsFromNode(node){
+    	if(node === undefined){
+    		node = document.getElementById('list');
+    	}
+    	while (node.hasChildNodes()) {
+		    node.removeChild(node.lastChild);
+		}
+    }
+
+    function sortItemListByCategory(){
+    	removeAllElementsFromNode(document.getElementById('list'));
+    	populateList({'sort': true, 'by': 'category'});
+
+    }
+
+    function sortItemListByItem(){
+    	removeAllElementsFromNode(document.getElementById('list'));
+    	populateList({'sort': true, 'by': 'task'});
+
+    }
+
+    function populateList(sort){
+    	if(!document.getElementById('list').hasChildNodes()){
+	    	var checkBoxItemList = createCheckBoxItemList(checklistItems, sort);
+			createCheckBoxesHTML(checkBoxItemList);
+			setColumns(checkBoxItemList.length);
+		}
+    }
+
+    function saveState(){
+
+    }
+
+    function restoreState(){
+
+    }
+
+    populateList();
+
+</script>
+</html>
