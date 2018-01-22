@@ -16,6 +16,12 @@
 			font-size: small;
 			font-variant: small-caps;
 		}
+
+		#shelfLifeLabel {
+			background: white;
+			font-size: small;
+			font-variant: small-caps;
+		}
 	</style>
 	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
 </head>
@@ -27,6 +33,7 @@
 	<input type="submit" value="Populate List" onclick="populateList()">
 	<input type="submit" value="Sort List by Category" onclick="sortItemListByCategory()">
 	<input type="submit" value="Sort List by Item" onclick="sortItemListByItem()">
+	<input type="submit" value="Sort List by Shelf Life" onclick="sortItemListByShelfLife()">
 </body>
 <script type="text/javascript">  
     try{
@@ -68,92 +75,92 @@
     document.onkeydown = hotkeyCheck;
 
   	var checklistItems = [
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Avocados'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Bananas'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Blackberries'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Strawberries'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Grapes Red'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Tomatoes'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Lemons'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Mandarin Oranges'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Apples'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Blueberries'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Beets'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Carrots'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Baby Carrots'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Onions'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Sweet Potatoes'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Spinach'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Dandlion Leaves'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Kale'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Chard'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Ginger'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Bell Peppers'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Celery'},
-			{'isChecked': false, 'category': 'produce frozen', 'item': 'Peas'},
-			{'isChecked': false, 'category': 'produce frozen', 'item': 'Broccoli Carrots Cauliflower Mix'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Beets'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Black Beans'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Mayonase'},
-			{'isChecked': false, 'category': 'produce fresh', 'item': 'Baby Bella'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Coffee'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Unsalted Delux Mixed Nuts'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Unsalted Peanuts'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Chia '},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Flax'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Broccoli Seeds'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Sprouting Mix'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Alfalfa '},
-			{'isChecked': false, 'category': 'grain', 'item': 'Rolled Oats'},
-			{'isChecked': false, 'category': 'grain', 'item': 'Brown Rice '},
-			{'isChecked': false, 'category': 'grain', 'item': 'Quinoa'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Ginger Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Tumeric Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Cinnamon Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Chili Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Garlic Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Black Pepper'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Cumin Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Curry Powder'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Red Pepper Flakes'},
-			{'isChecked': false, 'category': 'spices', 'item': 'Cyanne Pepper Powder'},
-			{'isChecked': false, 'category': 'meat fresh', 'item': 'Drumsticks'},
-			{'isChecked': false, 'category': 'meat fresh', 'item': 'Boneless Chicken Breast'},
-			{'isChecked': false, 'category': 'meat fresh', 'item': 'Ground Beef 20%'},
-			{'isChecked': false, 'category': 'meat cured', 'item': 'Hot Dogs'},
-			{'isChecked': false, 'category': 'meat cured', 'item': 'Bacon'},
-			{'isChecked': false, 'category': 'meat fresh', 'item': 'Fresh Salmon'},
-			{'isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Salmon'},
-			{'isChecked': false, 'category': 'meat fresh', 'item': 'Fresh Talapia'},
-			{'isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Talapia'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Free Range Chicken Eggs'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Whole Milk'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Cottage Cheese'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Cheese Sticks'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Feta '},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Shredded Cheese'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Deli Sliced Cheese'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Sour Cream'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Heavy Cream'},
-			{'isChecked': false, 'category': 'dairy', 'item': 'Butter'},
-			{'isChecked': false, 'category': 'oil', 'item': 'Olive Oil'},
-			{'isChecked': false, 'category': 'oil', 'item': 'Coconut Oil'},
-			{'isChecked': false, 'category': 'seeds and nuts', 'item': 'Peanut Butter'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Tomatoes Fire Roasted'},
-			{'isChecked': false, 'category': 'pre-made', 'item': 'Fruit Squeeze Pouches'},
-			{'isChecked': false, 'category': 'pasta', 'item': 'Mac \'n Cheese'},
-			{'isChecked': false, 'category': 'pre-made', 'item': 'Salad Kit Kale'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Coconut Milk'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Red Sauce'},
-			{'isChecked': false, 'category': 'pasta', 'item': 'Brown Rice Quinoa Rigatone'},
-			{'isChecked': false, 'category': 'bread', 'item': 'Whole Grain Waffle'},
-			{'isChecked': false, 'category': 'bread', 'item': '12 Grain Bread'},
-			{'isChecked': false, 'category': 'snack', 'item': 'Pretzel Slims'},
-			{'isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Meatballs'},
-			{'isChecked': false, 'category': 'meat pre-made', 'item': 'Chicken Salad'},
-			{'isChecked': false, 'category': 'canned', 'item': 'Ravioli'},
-			{'isChecked': false, 'category': 'pet supplies', 'item': 'Cat Food'},
-			{'isChecked': false, 'category': 'pet supplies', 'item': 'Cat Litter'}
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Avocados'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Bananas'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Blackberries'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Strawberries'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Grapes Red'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Tomatoes'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Lemons'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Mandarin Oranges'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Apples'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Blueberries'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Beets'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Carrots'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Baby Carrots'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Onions'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Sweet Potatoes'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Spinach'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Dandlion Leaves'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Kale'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Chard'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Ginger'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Bell Peppers'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Celery'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'produce frozen', 'item': 'Peas'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'produce frozen', 'item': 'Broccoli Carrots Cauliflower Mix'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Beets'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Black Beans'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Mayonase'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Baby Bella'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Coffee'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Unsalted Delux Mixed Nuts'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Unsalted Peanuts'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Chia '},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Flax'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Broccoli Seeds'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Sprouting Mix'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Alfalfa '},
+			{'shelfLife':'long','isChecked': false, 'category': 'grain', 'item': 'Rolled Oats'},
+			{'shelfLife':'long','isChecked': false, 'category': 'grain', 'item': 'Brown Rice '},
+			{'shelfLife':'long','isChecked': false, 'category': 'grain', 'item': 'Quinoa'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Ginger Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Tumeric Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Cinnamon Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Chili Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Garlic Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Black Pepper'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Cumin Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Curry Powder'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Red Pepper Flakes'},
+			{'shelfLife':'long','isChecked': false, 'category': 'spices', 'item': 'Cyanne Pepper Powder'},
+			{'shelfLife':'short','isChecked': false, 'category': 'meat fresh', 'item': 'Drumsticks'},
+			{'shelfLife':'short','isChecked': false, 'category': 'meat fresh', 'item': 'Boneless Chicken Breast'},
+			{'shelfLife':'short','isChecked': false, 'category': 'meat fresh', 'item': 'Ground Beef 20%'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat cured', 'item': 'Hot Dogs'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat cured', 'item': 'Bacon'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat fresh', 'item': 'Fresh Salmon'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Salmon'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat fresh', 'item': 'Fresh Talapia'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Talapia'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Free Range Chicken Eggs'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Whole Milk'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Cottage Cheese'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Cheese Sticks'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Feta '},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Shredded Cheese'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Deli Sliced Cheese'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Sour Cream'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Heavy Cream'},
+			{'shelfLife':'short','isChecked': false, 'category': 'dairy', 'item': 'Butter'},
+			{'shelfLife':'long','isChecked': false, 'category': 'oil', 'item': 'Olive Oil'},
+			{'shelfLife':'long','isChecked': false, 'category': 'oil', 'item': 'Coconut Oil'},
+			{'shelfLife':'long','isChecked': false, 'category': 'seeds and nuts', 'item': 'Peanut Butter'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Tomatoes Fire Roasted'},
+			{'shelfLife':'long','isChecked': false, 'category': 'pre-made', 'item': 'Fruit Squeeze Pouches'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'pasta', 'item': 'Mac \'n Cheese'},
+			{'shelfLife':'short','isChecked': false, 'category': 'pre-made', 'item': 'Salad Kit Kale'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Coconut Milk'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Red Sauce'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'pasta', 'item': 'Brown Rice Quinoa Rigatone'},
+			{'shelfLife':'short','isChecked': false, 'category': 'bread', 'item': 'Whole Grain Waffle'},
+			{'shelfLife':'short','isChecked': false, 'category': 'bread', 'item': '12 Grain Bread'},
+			{'shelfLife':'long','isChecked': false, 'category': 'snack', 'item': 'Pretzel Slims'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'meat frozen', 'item': 'Frozen Meatballs'},
+			{'shelfLife':'short','isChecked': false, 'category': 'meat pre-made', 'item': 'Chicken Salad'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Ravioli'},
+			{'shelfLife':'midlength','isChecked': false, 'category': 'pet supplies', 'item': 'Cat Food'},
+			{'shelfLife':'long','isChecked': false, 'category': 'pet supplies', 'item': 'Cat Litter'}
 		];
 	function createCheckBoxesHTML(checkBoxItems){
 		var checkbox;
@@ -177,18 +184,31 @@
 			categoryLabel.htmlFor = checkBoxItems[itemNumber].uuid;
 			categoryLabel.appendChild(document.createTextNode(checkBoxItems[itemNumber].category));
 
+			console.log(checkBoxItems[itemNumber]);
+
+			shelfLifeLabel = document.createElement('label');
+			shelfLifeLabel.htmlFor = checkBoxItems[itemNumber].uuid;
+			shelfLifeLabel.appendChild(document.createTextNode(checkBoxItems[itemNumber].shelfLife));
+
+			spaceLabel = document.createElement('label');
+			spaceLabel.htmlFor = checkBoxItems[itemNumber].uuid;
+			spaceLabel.appendChild(document.createTextNode(' '));
+
 			list = document.getElementById('list');
 			list.appendChild(checkbox);
 			label.innerHTML += '&nbsp';
 			list.appendChild(label);
 			list.appendChild(categoryLabel);
+			list.appendChild(spaceLabel);
+			list.appendChild(shelfLifeLabel);
 			list.appendChild(br);
 			categoryLabel.setAttribute('id', 'categoryLabel');
+			shelfLifeLabel.setAttribute('id', 'shelfLifeLabel');
 		}
 	}
 
-	function createCheckBoxItem(uuid, itemName, itemCategory){
-		return {'name': itemName, 'uuid': uuid, 'category': itemCategory};
+	function createCheckBoxItem(uuid, itemName, itemCategory, shelfLife){
+		return {'name': itemName, 'uuid': uuid, 'category': itemCategory, 'shelfLife': shelfLife};
 	}
 
 	function randomIntFromInterval(min,max){
@@ -224,16 +244,22 @@
 				    if(a.category > b.category) return 1;
 				    return 0;
 				});
-			} else {
+			} else if (sort.by === 'item') {
 				itemList.sort(function(a, b){
 				    if(a.item < b.item) return -1;
 				    if(a.item > b.item) return 1;
 				    return 0;
 				});
+			} else if (sort.by === 'shelfLife') {
+				itemList.sort(function(a, b){
+				    if(a.shelfLife < b.shelfLife) return -1;
+				    if(a.shelfLife > b.shelfLife) return 1;
+				    return 0;
+				});
 			}
 		}
 		for (var i = 0; i < itemList.length; i++) {
-			checkBoxItemList.push(createCheckBoxItem(createUuid(),itemList[i].item,itemList[i].category));
+			checkBoxItemList.push(createCheckBoxItem(createUuid(),itemList[i].item,itemList[i].category,itemList[i].shelfLife));
 		}
 		return checkBoxItemList;
 	}
@@ -304,6 +330,12 @@
     function sortItemListByItem(){
     	removeAllElementsFromNode(document.getElementById('list'));
     	populateList({'sort': true, 'by': 'item'});
+
+    }
+
+    function sortItemListByShelfLife(){
+    	removeAllElementsFromNode(document.getElementById('list'));
+    	populateList({'sort': true, 'by': 'shelfLife'});
 
     }
 
