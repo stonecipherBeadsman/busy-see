@@ -15,12 +15,14 @@
 			background: snow;
 			font-size: small;
 			font-variant: small-caps;
+			font-weight: bold;
 		}
 
 		#shelfLifeLabel {
 			background: white;
 			font-size: small;
 			font-variant: small-caps;
+			font-weight: bold;
 		}
 	</style>
 	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
@@ -28,9 +30,7 @@
 <body style="font-family: monospace; text-align: center;background: mintcream">
 	<h2>List of Items</h2>
 	<form id="list" style="text-align: left;"></form>
-	<input type="submit" value="Share List" onclick="alert(recordSelectedCheckBoxes(true))">
-	<input type="submit" value="Clear List" onclick="removeAllElementsFromNode()">
-	<input type="submit" value="Populate List" onclick="populateList()">
+	<input type="submit" value="Push List" onclick="alert(recordSelectedCheckBoxes(true)); pushToToDoApp();">
 	<input type="submit" value="Sort List by Category" onclick="sortItemListByCategory()">
 	<input type="submit" value="Sort List by Item" onclick="sortItemListByItem()">
 	<input type="submit" value="Sort List by Shelf Life" onclick="sortItemListByShelfLife()">
@@ -58,6 +58,11 @@
 	  	});
 	}
 
+	function pushToToDoApp(){
+		var items = recordSelectedCheckBoxes(true);
+		writeItems(items);
+	}
+
     function hotkeyCheck(evt) {
     	if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 69) {
     		var promptInput = prompt('Push to ToDo App?', 'yes');
@@ -66,8 +71,7 @@
     		} else if (promptInput === 'yes'){
     			//push changes to firebase
     			// Get a reference to the database service
-    			var items = recordSelectedCheckBoxes(true);
-				writeItems(items);
+	    		pushToToDoApp();
     		}
     	}
     }
@@ -86,7 +90,6 @@
     			console.log(checkboxes);
     			for (var i = 0; i < checkboxes.length; i++){
     				if (this.checkedItems.indexOf(checkboxes[i].value) > -1){
-    					console.log('in list');
     					checkboxes[i].setAttribute('checked', 'true');
     				}
     			}
@@ -109,7 +112,7 @@
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Mandarin Oranges'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Apples'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Blueberries'},
-			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Beets'},
+			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Beets Fresh'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Carrots'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Baby Carrots'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Onions'},
@@ -123,7 +126,7 @@
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Celery'},
 			{'shelfLife':'midlength','isChecked': false, 'category': 'produce frozen', 'item': 'Peas'},
 			{'shelfLife':'midlength','isChecked': false, 'category': 'produce frozen', 'item': 'Broccoli Carrots Cauliflower Mix'},
-			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Beets'},
+			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Beets Canned'},
 			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Black Beans'},
 			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Mayonase'},
 			{'shelfLife':'short','isChecked': false, 'category': 'produce fresh', 'item': 'Baby Bella'},
@@ -184,7 +187,15 @@
 			{'shelfLife':'short','isChecked': false, 'category': 'meat pre-made', 'item': 'Chicken Salad'},
 			{'shelfLife':'long','isChecked': false, 'category': 'canned', 'item': 'Ravioli'},
 			{'shelfLife':'midlength','isChecked': false, 'category': 'pet supplies', 'item': 'Cat Food'},
-			{'shelfLife':'long','isChecked': false, 'category': 'pet supplies', 'item': 'Cat Litter'}
+			{'shelfLife':'long','isChecked': false, 'category': 'pet supplies', 'item': 'Cat Litter'},
+			{'shelfLife':'long','isChecked': false, 'category': 'supplements', 'item': 'Calm'},
+			{'shelfLife':'long','isChecked': false, 'category': 'supplements', 'item': 'Whey Protien'},
+			{'shelfLife':'long','isChecked': false, 'category': 'supplements', 'item': 'Childrens Gummy Multivitamins'},
+			{'shelfLife':'long','isChecked': false, 'category': 'house supplies', 'item': 'Toilet Paper'},
+			{'shelfLife':'long','isChecked': false, 'category': 'house supplies', 'item': 'Paper Towels'},
+			{'shelfLife':'long','isChecked': false, 'category': 'house supplies', 'item': 'Band-Aids'},
+			{'shelfLife':'long','isChecked': false, 'category': 'house supplies', 'item': 'Epsom Salt'},
+			{'shelfLife':'long','isChecked': false, 'category': 'house supplies', 'item': 'Liquid Hand Soap'}
 		];
 	function createCheckBoxesHTML(checkBoxItems){
 		var checkbox;
@@ -297,8 +308,12 @@
 		 }
 
 		if(shouldReturnAsString){
+			var delim = ',';
 			for (var x = 0; x < arrayVal.length; x++){
-				valString += arrayVal[x] + ',';
+				if(x === arrayVal.length - 1){
+					delim = '';
+				}
+				valString += arrayVal[x] + delim;
 			}
 			return valString;
 		} else {

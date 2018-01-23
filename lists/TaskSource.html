@@ -15,6 +15,7 @@
 			background: mintcream;
 			font-size: small;
 			font-variant: small-caps;
+			font-weight: bold;
 		}
 	</style>
 	<script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
@@ -22,11 +23,9 @@
 <body style="font-family: monospace; text-align: center;background: snow">
 	<h2>List of Tasks</h2>
 	<form id="list" style="text-align: left;"></form>
-	<input type="submit" value="Share List" onclick="alert(getSelectedCheckBoxes(true))">
-	<input type="submit" value="Clear List" onclick="removeAllElementsFromNode()">
-	<input type="submit" value="Populate List" onclick="populateList()">
+	<input type="submit" value="Push List" onclick="alert(recordSelectedCheckBoxes(true)); pushToToDoApp();">
 	<input type="submit" value="Sort List by Category" onclick="sortItemListByCategory()">
-	<input type="submit" value="Sort List by Item" onclick="sortItemListByItem()">
+	<input type="submit" value="Sort List by Task" onclick="sortItemListByItem()">
 </body>
 <script type="text/javascript">
     try{
@@ -51,6 +50,11 @@
 	  	});
 	}
 
+	function pushToToDoApp(){
+		var tasks = recordSelectedCheckBoxes(true);
+		writeTasks(tasks);
+	}
+
     function hotkeyCheck(evt) {
     	if (evt.ctrlKey && evt.shiftKey && evt.keyCode === 69) {
     		var promptInput = prompt('Push to ToDo App?', 'yes');
@@ -59,8 +63,30 @@
     		} else if (promptInput === 'yes'){
     			//push changes to firebase
     			// Get a reference to the database service
-    			var tasks = getSelectedCheckBoxes(true);
-				writeTasks(tasks);
+    			pushToToDoApp();
+    		}
+    	}
+    }
+
+    var State = {
+    	'checkedItems': [],
+    	'saveCheckedItems': function(){
+			this.checkedItems = recordSelectedCheckBoxes();
+    	},
+    	'getCheckedItems': function(){
+    		return this.checkedItems;
+    	},
+    	'restoreCheckedState': function(){
+    		if(this.checkedItems.length > 0){
+    			var checkboxes = document.getElementsByName('task');
+    			console.log(checkboxes);
+    			for (var i = 0; i < checkboxes.length; i++){
+    				if (this.checkedItems.indexOf(checkboxes[i].value) > -1){
+    					checkboxes[i].setAttribute('checked', 'true');
+    				}
+    			}
+    		} else {
+    			throw 'Warning: You are calling restoreCheckedState but do not have any items checked';
     		}
     	}
     }
@@ -284,19 +310,23 @@
 		return checkBoxItemList;
 	}
 
-	function getSelectedCheckBoxes(shouldReturnAsString){
+	function recordSelectedCheckBoxes(shouldReturnAsString){
 		var checkboxes = document.getElementsByName('task');
 		var arrayVal = [];
 		var valString = '';
-		for (var i= 0; i<checkboxes.length;i++){
+		for (var i= 0; i < checkboxes.length;i++){
 		    if (checkboxes[i].checked === true){
 		        arrayVal.push(checkboxes[i].value); 
 		    }
 		 }
 
 		if(shouldReturnAsString){
+			var delim = ',';
 			for (var x = 0; x < arrayVal.length; x++){
-				valString += arrayVal[x] + ',';
+				if(x === arrayVal.length - 1){
+					delim = '';
+				}
+				valString += arrayVal[x] + delim;
 			}
 			return valString;
 		} else {
@@ -344,15 +374,17 @@
     }
 
     function sortItemListByCategory(){
+    	State.saveCheckedItems();
     	removeAllElementsFromNode(document.getElementById('list'));
     	populateList({'sort': true, 'by': 'category'});
-
+    	State.restoreCheckedState();
     }
 
     function sortItemListByItem(){
+    	State.saveCheckedItems();
     	removeAllElementsFromNode(document.getElementById('list'));
     	populateList({'sort': true, 'by': 'task'});
-
+    	State.restoreCheckedState();
     }
 
     function populateList(sort){
@@ -361,14 +393,6 @@
 			createCheckBoxesHTML(checkBoxItemList);
 			setColumns(checkBoxItemList.length);
 		}
-    }
-
-    function saveState(){
-
-    }
-
-    function restoreState(){
-
     }
 
     populateList();
