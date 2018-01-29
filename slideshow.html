@@ -167,6 +167,7 @@ input {
     	}
     //dir /B > filelist.txt
 	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+		var isMobile = true;
 	    // Take the user to a different screen here.
 	    console.log(navigator.userAgent);
 	    pullInToDos(createNewElements);
@@ -185,19 +186,21 @@ input {
           }
           return array;
     }
-    function generatePictureHtml(imageNames, useRandom){
-        var frame = document.getElementById('pictureFrame');
-        var image;
-        if(useRandom){
-            imageNames = shuffle(shuffle(imageNames));
-        }
-        for(x = 0; x < imageNames.length; x++){
-            image = document.createElement("img");
-            image.className = 'mySlides';
-            image.src = imageNames[x];
-            image.style = 'width:100%';
-            frame.insertBefore(image, frame.childNodes[0]);
-        }
+    function generatePictureHtml(imageNames, useRandom, isMobile){
+    	if(!isMobile){
+	        var frame = document.getElementById('pictureFrame');
+	        var image;
+	        if(useRandom){
+	            imageNames = shuffle(shuffle(imageNames));
+	        }
+	        for(x = 0; x < imageNames.length; x++){
+	            image = document.createElement("img");
+	            image.className = 'mySlides';
+	            image.src = imageNames[x];
+	            image.style = 'width:100%';
+	            frame.insertBefore(image, frame.childNodes[0]);
+	        }
+	    }
     }
 
     function readToDos(path){
@@ -382,7 +385,7 @@ input {
 
     var imageNames = ["024.PNG","025.PNG","026.PNG","027.PNG","028.PNG","023.PNG","030.PNG","001.PNG","002.PNG","003.PNG","004.PNG","005.PNG","006.PNG","007.jpg","008.PNG","009.jpg","010.jpg","011.jpg","012.jpg","013.jpg","014.PNG","015.png","016.jpg","017.jpg","018.png","019.png","020.png","021.jpg","022.jpg","023.PNG","2018.png"];
 
-    generatePictureHtml(imageNames, true);
+    generatePictureHtml(imageNames, true, isMobile);
 
     var source;
     var myIndex = 0;
